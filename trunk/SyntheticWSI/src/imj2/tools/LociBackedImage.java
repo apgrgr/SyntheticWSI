@@ -249,6 +249,7 @@ public final class LociBackedImage extends TiledImage2D {
 			this.reader.setSeries(this.seriesCount);
 			
 			if (this.reader.getSeriesMetadata().isEmpty()) {
+				++this.seriesCount;
 				break;
 			}
 		}
