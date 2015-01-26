@@ -1,13 +1,16 @@
 package fr.unistra.wsi.synthetic;
 
 import static imj2.tools.IMJTools.awtImage;
+import static java.lang.Double.parseDouble;
 import static java.lang.Math.min;
 import static net.sourceforge.aprog.tools.Tools.baseName;
 import static net.sourceforge.aprog.tools.Tools.debugPrint;
 import static net.sourceforge.aprog.tools.Tools.unchecked;
 import static net.sourceforge.aprog.xml.XMLTools.getNode;
+import static net.sourceforge.aprog.xml.XMLTools.getNodes;
 import static net.sourceforge.aprog.xml.XMLTools.getNumber;
 import static net.sourceforge.aprog.xml.XMLTools.parse;
+
 import imj2.core.ConcreteImage2D;
 import imj2.core.IMJCoreTools;
 import imj2.core.Image;
@@ -19,7 +22,6 @@ import imj2.tools.Canvas;
 import imj2.tools.IMJTools;
 import imj2.tools.IMJTools.TileProcessor;
 import imj2.tools.Image2DComponent;
-import imj2.tools.Image2DComponent.Painter;
 import imj2.tools.InputSource;
 import imj2.tools.OutputSource;
 
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +46,6 @@ import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 
-import net.sourceforge.aprog.swing.SwingTools;
 import net.sourceforge.aprog.tools.CommandLineArgumentsParser;
 import net.sourceforge.aprog.tools.ConsoleMonitor;
 import net.sourceforge.aprog.tools.IllegalInstantiationException;
@@ -77,7 +79,7 @@ public final class GenerateWSI {
 	
 	static final File RENDERERS_FILE = new File("renderers.jo");
 	
-	public static final ModelRenderer newRenderer(final Model model, final int version) {
+	public static final ModelRenderer newRenderer(final Model model, final String rendererXMLPath) {
 		if (RENDERERS_FILE.exists()) {
 			final ModelRenderer result = Tools.readObject(RENDERERS_FILE.getPath());
 			
@@ -87,49 +89,36 @@ public final class GenerateWSI {
 		}
 		
 		final ModelRenderer result = new ModelRenderer(model);
+		final File root = new File(rendererXMLPath).getParentFile();
 		
-		if (version == 1) {
-			result.setRegionRenderer("H&E fat", new AdjacentObjectsRenderer(
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E fat 1.xml"),
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E fat 2.xml")));
-			result.setRegionRenderer("H&E cancer", new AdjacentObjectsRenderer(
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E cancer 1.xml")));
-			result.setRegionRenderer("H&E lobule", new AdjacentObjectsRenderer(
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E lobule 1.xml")));
-			result.setRegionRenderer("H&E stroma", new AdjacentObjectsRenderer(0.8,
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E stroma 1.xml"),
-					new File(System.getProperty("user.home"), "Desktop/images/textures/H&E stroma 2.xml")));
-		} else if (version == 2) {
-			result.setRegionRenderer("H&E fat", new AdjacentObjectsRenderer(
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_cd8_fat_1.xml")
-			));
-			result.setRegionRenderer("H&E lobule", new AdjacentObjectsRenderer(0.9,
-//					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_cd8_lobule_1.xml"),
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_cd8_lobule_2.xml")
-			));
-			result.setRegionRenderer("H&E stroma", new AdjacentObjectsRenderer(0.8,
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_cd8_stroma_1.xml")
-			));
-			result.setRegionRenderer("H&E loose stroma", new AdjacentObjectsRenderer(0.8,
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_cd8_loose_stroma_1.xml")
-			));
-		} else {
-			result.setRegionRenderer("H&E fat", new AdjacentObjectsRenderer(
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_he_fat_1.xml")
-			));
-			result.setRegionRenderer("H&E lobule", new AdjacentObjectsRenderer(0.9,
-//					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_he_lobule_1.xml"),
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_he_lobule_2.xml")
-			));
-			result.setRegionRenderer("H&E stroma", new AdjacentObjectsRenderer(0.8,
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_he_stroma_1.xml")
-			));
-			result.setRegionRenderer("H&E loose stroma", new AdjacentObjectsRenderer(0.8,
-					new File(System.getProperty("user.home"), "Desktop/images/sysimit_nb/textures/nb02_he_loose_stroma_1.xml")
-			));
+		
+		try (final InputStream xmlInputStream = new FileInputStream(rendererXMLPath)) {
+			final Document xml = parse(xmlInputStream);
+			
+			for (final Node regionNode : getNodes(xml, "renderer/region")) {
+				final Element regionElement = (Element) regionNode;
+				final String label = regionElement.getAttribute("label");
+				final Element regionRendererElement = (Element) regionElement.getElementsByTagName("*").item(0);
+				
+				Tools.debugPrint(label);
+				
+				if ("adjacentObjects".equals(regionRendererElement.getTagName())) {
+					final double collisionableRadius = parseDouble(select(regionRendererElement.getAttribute("collisionableRadius"), "1.0"));
+					final File[] textures = getNodes(regionRendererElement, "texture").stream().map(n -> new File(root, ((Element) n).getAttribute("file"))).toArray(File[]::new);
+					result.setRegionRenderer(label, new AdjacentObjectsRenderer(collisionableRadius, textures));
+				} else {
+					Tools.debugError("Unknown region renderer:", regionElement.getTagName());
+				}
+			}
+			
+			return result;
+		} catch (final IOException exception) {
+			throw new UncheckedIOException(exception);
 		}
-		
-		return result;
+	}
+	
+	public static final String select(final String string1, final String string2) {
+		return string1.isEmpty() ? string2 : string1;
 	}
 	
 	/**
@@ -148,13 +137,11 @@ public final class GenerateWSI {
 		final int tileWidth = arguments.get("tileWidth", 512)[0];
 		final int tileHeight = arguments.get("tileHeight", tileWidth)[0];
 		final boolean showResult = arguments.get("show", 1)[0] != 0;
-		final int version = arguments.get("version", 2)[0];
+		final String rendererXMLPath = arguments.get("renderer", "");
 		final TicToc timer = new TicToc();
 		
-		Tools.debugPrint(model);
-		
 		System.out.println("Generating WSI... " + new Date(timer.tic()));
-		process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, version);
+		process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, rendererXMLPath);
 		subsample(temporaryDirectory, outputImageName);
 		writeWSI(temporaryDirectory, outputFile);
 		System.out.println("WSI generated in " + timer.toc() + " ms");
@@ -169,13 +156,13 @@ public final class GenerateWSI {
 	}
 	
 	public static final void process(final Model model, final int tileWidth, final int tileHeight,
-			final File temporaryDirectory, final String outputImageName, final int version) throws IOException {
+			final File temporaryDirectory, final String outputImageName, final String rendererXMLPath) throws IOException {
 		final ConsoleMonitor monitor = new ConsoleMonitor(MONITOR_PERIOD_MILLISECONDS);
 		final TicToc timer = new TicToc();
 		
 		System.out.println("Processing... " + new Date(timer.tic()));
 		
-		final ModelRenderer renderer = newRenderer(model, version);
+		final ModelRenderer renderer = newRenderer(model, rendererXMLPath);
 		final Rectangle bounds = model.getBounds();
 		
 		bounds.width *= SCALE;
