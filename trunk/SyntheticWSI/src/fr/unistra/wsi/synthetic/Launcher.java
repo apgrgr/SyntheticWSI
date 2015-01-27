@@ -12,11 +12,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
@@ -26,6 +31,7 @@ import javax.swing.SwingUtilities;
 
 import net.sourceforge.aprog.swing.SwingTools;
 import net.sourceforge.aprog.tools.IllegalInstantiationException;
+import net.sourceforge.aprog.tools.Tools;
 
 /**
  * @author greg (creation 2015-01-27)
@@ -86,7 +92,27 @@ public final class Launcher {
 		case QUIT:
 			break;
 		case EXTRACT_EXAMPLE:
-			// TODO
+			final File applicationFile = Tools.getApplicationFile();
+			
+			if (applicationFile.isDirectory()) {
+				// TODO
+			} else {
+				try (final JarFile jarFile = new JarFile(applicationFile)) {
+					for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
+						if (entry.getName().startsWith("data/") && !entry.isDirectory()) {
+							final File target = new File(entry.getName());
+							
+							target.getParentFile().mkdirs();
+							
+							try (final InputStream input = jarFile.getInputStream(entry);
+									final OutputStream output = new FileOutputStream(target)) {
+								Tools.writeAndClose(input, false, output, false);
+							}
+						}
+					}
+				}
+			}
+			
 			break;
 		case MODEL_MAKER:
 			ModelMaker.main(array());
