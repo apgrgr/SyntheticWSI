@@ -268,20 +268,6 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 			if (!region.getGeometry().contains(x, y)) {
 				final Point2D nearestRegionVertex = regionVertices.stream().reduce((p1, p2) -> p1.distance(x, y) <= p2.distance(x, y) ? p1 : p2).get();
 				result = max(result, nearestRegionVertex.distance(x, y));
-				final double nearestX = nearestRegionVertex.getX();
-				final double nearestY = nearestRegionVertex.getY();
-				
-				if (x < nearestX) {
-					bounds.setRect(nearestX, bounds.getY(), bounds.getMaxX() - nearestX, bounds.getHeight());
-				} else if (nearestX < x) {
-					bounds.setRect(bounds.getX(), bounds.getY(), nearestX - bounds.getX(), bounds.getHeight());
-				}
-				
-				if (y < nearestY) {
-					bounds.setRect(bounds.getY(), nearestY, bounds.getWidth(), bounds.getMaxY() - nearestY);
-				} else if (nearestY < y) {
-					bounds.setRect(bounds.getX(), bounds.getY(), bounds.getWidth(), nearestY - bounds.getY());
-				}
 				
 				final double r = maxR * sqrt(RANDOM.nextDouble());
 				final double a = RANDOM.nextDouble() * 2.0 * PI;
