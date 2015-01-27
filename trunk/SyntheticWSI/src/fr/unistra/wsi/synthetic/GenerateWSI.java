@@ -71,11 +71,11 @@ public final class GenerateWSI {
 	
 	static final double SCALE = 1.0;
 	
-	static final long CONSTRAINT_SOLVER_MAXIMUM_MILLISECONDS = 64000L;
+	static final long CONSTRAINT_SOLVER_MAXIMUM_MILLISECONDS = 120_000L;
 	
 	static final double MAXIMUM_CPU_LOAD = 0.75;
 	
-	static final long MONITOR_PERIOD_MILLISECONDS = 60000L;
+	static final long MONITOR_PERIOD_MILLISECONDS = 60_000L;
 	
 	static final File RENDERERS_FILE = new File("renderers.jo");
 	
