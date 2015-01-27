@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<renderer>
+    <region label="fat">
+        <adjacentObjects>
+            <texture file="nb02_cd8_fat_1.xml"/>
+        </adjacentObjects>
+    </region>
+    <region label="lobule">
+        <adjacentObjects collisionableRadius="0.9">
+            <texture file="nb02_cd8_lobule_1.xml"/>
+        </adjacentObjects>
+    </region>
+    <region label="stroma">
+        <adjacentObjects collisionableRadius="0.4">
+            <texture file="nb02_cd8_stroma_1.xml"/>
+        </adjacentObjects>
+    </region>
+    <region label="loose stroma">
+        <adjacentObjects collisionableRadius="0.8">
+            <texture file="nb02_cd8_loose_stroma_1.xml"/>
+        </adjacentObjects>
+    </region>
+</renderer>

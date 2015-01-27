@@ -13,6 +13,7 @@
             <zipfileset excludes="META-INF/*.SF" src="lib/aprog.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/jgencode.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/bioformats_package.jar"/>
+            <fileset dir="lib" excludes="*.jar"/>
         </jar>
     </target>
 </project>
