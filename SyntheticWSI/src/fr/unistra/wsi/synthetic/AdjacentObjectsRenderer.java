@@ -1,7 +1,9 @@
 package fr.unistra.wsi.synthetic;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.cos;
 import static java.lang.Math.max;
+import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.util.Collections.synchronizedMap;
 import static java.util.stream.Collectors.toList;
@@ -62,7 +64,6 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 		this.textures = Arrays.stream(textureModelFiles).map(f -> new Model().open(f)).toArray(Model[]::new);
 		this.systems = synchronizedMap(new HashMap<>());
 		this.objects = synchronizedMap(new HashMap<>());
-//		this.unitAmounts = newProportions(this.getTextureUnits().size());
 		this.unitAmounts = newProportions(this.getTextureUnits());
 	}
 	
@@ -150,12 +151,9 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 			final double area = region.computeArea();
 			final int n = this.unitAmounts.length;
 			final int[] unitCounts = new int[n];
-			final double k = region.getLabel().endsWith("H&E stroma") ? 2.5 : 1.0;
-			
-			Tools.debugPrint("k:", k);
 			
 			for (int i = 0; i < n; ++i) {
-				unitCounts[i] = (int) (k * this.unitAmounts[i] * area /
+				unitCounts[i] = (int) (this.unitAmounts[i] * area /
 						(square(this.collisionableRadius) * this.getTextureUnits().get(i).getRegion().computeArea()));
 			}
 			
@@ -169,10 +167,10 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 				}
 			}
 			
-			// TODO make more precise objects
 			{
 				final double[] collisionRadii = this.getTextureUnits().stream().mapToDouble(
 						p -> this.collisionableRadius * sqrt(p.getRegion().computeArea() / PI)).toArray();
+				final double maxR = sqrt(square(bounds.width) + square(bounds.height)) / 2.0;
 				
 				Tools.debugPrint("unitRadii:", Arrays.toString(collisionRadii));
 				
@@ -180,9 +178,10 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 					final double radius = collisionRadii[i];
 					
 					for (int j = 0; j < unitCounts[i]; ++j) {
-						final double precompacting = 1.0;
-						final int sphereId = system.newSphere(bounds.getCenterX() + (RANDOM.nextDouble() - 0.5) * bounds.width * precompacting,
-								bounds.getCenterY() + (RANDOM.nextDouble() - 0.5) * bounds.height * precompacting, 0.0, radius, 0);
+						final double centerR = maxR * sqrt(RANDOM.nextDouble());
+						final double centerA = RANDOM.nextDouble() * 2.0 * PI;
+						final int sphereId = system.newSphere(bounds.getCenterX() + centerR * cos(centerA),
+								bounds.getCenterY() + centerR * sin(centerA), 0.0, radius, 0);
 						objects.add(new TextureObject(i, sphereId, 2.0 * PI * RANDOM.nextDouble()));
 					}
 				}
@@ -236,34 +235,6 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 		} else {
 			final List<TextureUnit> textureUnits = this.getTextureUnits();
 			final AffineTransform transform = new AffineTransform();
-			
-//			if (this.tiledObjects == null) {
-//				this.tiledObjects = Collections.synchronizedMap(new HashMap<>());
-//				
-//				objects.forEach(o -> {
-//					final double x = system.getSphereX(o.getSphereId());
-//					final double y = system.getSphereY(o.getSphereId());
-//					final TextureUnit unit = textureUnits.get(o.getUnitId());
-//					final BufferedImage image = unit.getImage();
-//					final double r = sqrt(square(image.getWidth()) + square(image.getHeight())) / 2.0;
-//					
-//					final Point topLeftTile = new Point(optimalTileWidth * ((int) (x - r) / optimalTileWidth),
-//							optimalTileHeight * ((int) (y - r) / optimalTileHeight));
-//					final Point topRightTile = new Point(optimalTileWidth * ((int) (x + r) / optimalTileWidth),
-//							optimalTileHeight * ((int) (y - r) / optimalTileHeight));
-//					final Point bottomLeftTile = new Point(optimalTileWidth * ((int) (x - r) / optimalTileWidth),
-//							optimalTileHeight * ((int) (y + r) / optimalTileHeight));
-//					final Point bottomRightTile = new Point(optimalTileWidth * ((int) (x + r) / optimalTileWidth),
-//							optimalTileHeight * ((int) (y + r) / optimalTileHeight));
-//					
-//					this.tiledObjects.computeIfAbsent(topLeftTile, p -> new ArrayList<>()).add(o);
-//					this.tiledObjects.computeIfAbsent(topRightTile, p -> new ArrayList<>()).add(o);
-//					this.tiledObjects.computeIfAbsent(bottomLeftTile, p -> new ArrayList<>()).add(o);
-//					this.tiledObjects.computeIfAbsent(bottomRightTile, p -> new ArrayList<>()).add(o);
-//				});
-//			}
-//			
-//			final Collection<TextureObject> tileObjects = this.tiledObjects.get(new Point(tileX, tileY));
 			final Consumer<? super TextureObject> action = o -> {
 				final double x = system.getSphereX(o.getSphereId());
 				final double y = system.getSphereY(o.getSphereId());
@@ -278,14 +249,6 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 				buffer.getGraphics().drawImage(image, transform, null);
 			};
 			
-//			if (tileObjects != null) {
-//				if (system == null) {
-//					Tools.debugError("Internal error");
-//				} else {
-//					tileObjects.forEach(action);
-//				}
-//			}
-			
 			objects.forEach(action);
 		}
 	}
@@ -296,6 +259,7 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 		double result = 0.0;
 		final Point2D center = region.computeCenter();
 		final Rectangle2D bounds = region.getGeometry().getBounds2D();
+		final double maxR = sqrt(square(bounds.getWidth()) + square(bounds.getHeight())) / 2.0;
 		
 		for (int i = 0; i < n; ++i) {
 			final double x = system.getSphereX(i);
@@ -304,34 +268,26 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 			if (!region.getGeometry().contains(x, y)) {
 				final Point2D nearestRegionVertex = regionVertices.stream().reduce((p1, p2) -> p1.distance(x, y) <= p2.distance(x, y) ? p1 : p2).get();
 				result = max(result, nearestRegionVertex.distance(x, y));
+				final double nearestX = nearestRegionVertex.getX();
+				final double nearestY = nearestRegionVertex.getY();
 				
-//				final double s = 1.0 + GenerateWSI.RANDOM.nextDouble() * 1.5;
-//				system.setSphereX(i, x + s * (nearestRegionVertex.getX() - x));
-//				system.setSphereY(i, y + s * (nearestRegionVertex.getY() - y));
-				
-				if (true) {
-					final double nearestX = nearestRegionVertex.getX();
-					final double nearestY = nearestRegionVertex.getY();
-					
-					if (x < nearestX) {
-						bounds.setRect(nearestX, bounds.getY(), bounds.getMaxX() - nearestX, bounds.getHeight());
-					} else if (nearestX < x) {
-						bounds.setRect(bounds.getX(), bounds.getY(), nearestX - bounds.getX(), bounds.getHeight());
-					}
-					
-					if (y < nearestY) {
-						bounds.setRect(bounds.getY(), nearestY, bounds.getWidth(), bounds.getMaxY() - nearestY);
-					} else if (nearestY < y) {
-						bounds.setRect(bounds.getX(), bounds.getY(), bounds.getWidth(), nearestY - bounds.getY());
-					}
-					
-					system.setSphereX(i, bounds.getX() + (0.25 + 0.5 * RANDOM.nextDouble()) * bounds.getWidth());
-					system.setSphereY(i, bounds.getY() + (0.25 + 0.5 * RANDOM.nextDouble()) * bounds.getHeight());
-				} else {
-					system.setSphereX(i, center.getX() + RANDOM.nextDouble() - 0.5);
-					system.setSphereX(i, center.getY() + RANDOM.nextDouble() - 0.5);
+				if (x < nearestX) {
+					bounds.setRect(nearestX, bounds.getY(), bounds.getMaxX() - nearestX, bounds.getHeight());
+				} else if (nearestX < x) {
+					bounds.setRect(bounds.getX(), bounds.getY(), nearestX - bounds.getX(), bounds.getHeight());
 				}
 				
+				if (y < nearestY) {
+					bounds.setRect(bounds.getY(), nearestY, bounds.getWidth(), bounds.getMaxY() - nearestY);
+				} else if (nearestY < y) {
+					bounds.setRect(bounds.getX(), bounds.getY(), bounds.getWidth(), nearestY - bounds.getY());
+				}
+				
+				final double r = maxR * sqrt(RANDOM.nextDouble());
+				final double a = RANDOM.nextDouble() * 2.0 * PI;
+				
+				system.setSphereX(i, center.getX() + r * cos(a));
+				system.setSphereY(i, center.getY() + r * sin(a));
 			}
 		}
 		
