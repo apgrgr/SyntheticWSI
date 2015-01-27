@@ -5,7 +5,7 @@
     <target name="create_run_jar">
         <jar destfile="syntheticwsi.jar" filesetmanifest="mergewithoutmain" duplicate="preserve">
             <manifest>
-                <attribute name="Main-Class" value="fr.unistra.wsi.synthetic.ModelMaker"/>
+                <attribute name="Main-Class" value="fr.unistra.wsi.synthetic.Launcher"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="src"/>
