@@ -44,13 +44,15 @@ public final class Launcher {
 	
 	static final int QUIT = -1;
 	
-	static final int EXTRACT_EXAMPLE = 0;
+	static final int SHOW_README = 0;
 	
-	static final int MODEL_MAKER = 1;
+	static final int EXTRACT_EXAMPLE = 1;
 	
-	static final int GENERATE_WSI = 2;
+	static final int MODEL_MAKER = 2;
 	
-	static final int VIEW_WSI = 3;
+	static final int GENERATE_WSI = 3;
+	
+	static final int VIEW_WSI = 4;
 	
 	static final Preferences preferences = Preferences.userNodeForPackage(Launcher.class);
 	
@@ -71,10 +73,12 @@ public final class Launcher {
 			@Override
 			public final void run() {
 				window[0] = show(verticalBox(
+						//action(actions, window, "README", SHOW_README)
 						action(actions, window, "Extract example", EXTRACT_EXAMPLE),
 						action(actions, window, "ModelMaker", MODEL_MAKER),
-						action(actions, window, "GenerateWSI", GENERATE_WSI),
-						action(actions, window, "ViewWSI", VIEW_WSI)), "SyntheticWSI", false);
+						action(actions, window, "GenerateWSI", GENERATE_WSI)
+//						action(actions, window, "ViewWSI", VIEW_WSI)
+						), "SyntheticWSI", false);
 				
 				window[0].addWindowListener(new WindowAdapter() {
 					
@@ -88,59 +92,67 @@ public final class Launcher {
 			
 		});
 		
-		switch (actions.take()) {
-		case QUIT:
-			break;
-		case EXTRACT_EXAMPLE:
-			final File applicationFile = Tools.getApplicationFile();
+		int action;
+		
+		do {
+			action = actions.take();
 			
-			if (applicationFile.isDirectory()) {
+			switch (action) {
+			case SHOW_README:
 				// TODO
-			} else {
-				try (final JarFile jarFile = new JarFile(applicationFile)) {
-					for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
-						if (entry.getName().startsWith("data/") && !entry.isDirectory()) {
-							final File target = new File(entry.getName());
-							
-							target.getParentFile().mkdirs();
-							
-							try (final InputStream input = jarFile.getInputStream(entry);
-									final OutputStream output = new FileOutputStream(target)) {
-								Tools.writeAndClose(input, false, output, false);
+				
+				break;
+			case EXTRACT_EXAMPLE:
+				final File applicationFile = Tools.getApplicationFile();
+				
+				if (applicationFile.isDirectory()) {
+					// TODO
+				} else {
+					try (final JarFile jarFile = new JarFile(applicationFile)) {
+						for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
+							if (entry.getName().startsWith("data/") && !entry.isDirectory()) {
+								final File target = new File(entry.getName());
+								
+								target.getParentFile().mkdirs();
+								
+								try (final InputStream input = jarFile.getInputStream(entry);
+										final OutputStream output = new FileOutputStream(target)) {
+									Tools.writeAndClose(input, false, output, false);
+								}
 							}
 						}
 					}
 				}
-			}
-			
-			break;
-		case MODEL_MAKER:
-			ModelMaker.main(array());
-			break;
-		case GENERATE_WSI:
-			final GenerateWSIArguments arguments = new GenerateWSIArguments()
-				.setModelPath(preferences.get("modelPath", pathOrEmpty("data/SYN_NB_01_001.xml")))
-				.setRendererPath(preferences.get("rendererPath", pathOrEmpty("data/textures/he_renderer.xml")));
-			
-			SwingUtilities.invokeLater(() -> showEditDialog("GenerateWSI",
-					() ->  actions.offer(GENERATE_WSI),
-					() ->  actions.offer(QUIT),
-					property("Model path:", arguments::getModelPath, arguments::setModelPath),
-					property("Renderer path:", arguments::getRendererPath, arguments::setRendererPath)));
-			
-			switch (actions.take()) {
+				
+				break;
+			case MODEL_MAKER:
+				ModelMaker.main(array());
+				break;
 			case GENERATE_WSI:
-				preferences.put("modelPath", arguments.getModelPath());
-				preferences.put("rendererPath", arguments.getRendererPath());
-				GenerateWSI.main(array("model", arguments.getModelPath(), "renderer", arguments.getRendererPath()));
+				final GenerateWSIArguments arguments = new GenerateWSIArguments()
+					.setModelPath(preferences.get("modelPath", pathOrEmpty("data/SYN_NB_01_001.xml")))
+					.setRendererPath(preferences.get("rendererPath", pathOrEmpty("data/textures/he_renderer.xml")));
+				
+				SwingUtilities.invokeLater(() -> showEditDialog("GenerateWSI",
+						() ->  actions.offer(GENERATE_WSI),
+						() ->  actions.offer(QUIT),
+						property("Model path:", arguments::getModelPath, arguments::setModelPath),
+						property("Renderer path:", arguments::getRendererPath, arguments::setRendererPath)));
+				
+				switch (actions.take()) {
+				case GENERATE_WSI:
+					preferences.put("modelPath", arguments.getModelPath());
+					preferences.put("rendererPath", arguments.getRendererPath());
+					GenerateWSI.main(array("model", arguments.getModelPath(), "renderer", arguments.getRendererPath()));
+					break;
+				}
+				
+				break;
+			case VIEW_WSI:
+				// TODO
 				break;
 			}
-			
-			break;
-		case VIEW_WSI:
-			// TODO
-			break;
-		}
+		} while (action != QUIT);
 	}
 	
 	public static final String pathOrEmpty(final String path) {
@@ -152,8 +164,6 @@ public final class Launcher {
 			
 			@Override
 			public final void actionPerformed(final ActionEvent event) {
-				window[0].dispose();
-				
 				actions.offer(action);
 			}
 			
