@@ -3,15 +3,20 @@ package fr.unistra.wsi.synthetic;
 import static imj2.tools.CommonSwingTools.center;
 import static imj2.tools.CommonSwingTools.property;
 import static imj2.tools.CommonSwingTools.showEditDialog;
+import static net.sourceforge.aprog.swing.SwingTools.scrollable;
 import static net.sourceforge.aprog.swing.SwingTools.show;
 import static net.sourceforge.aprog.swing.SwingTools.verticalBox;
 import static net.sourceforge.aprog.tools.Tools.array;
+import static net.sourceforge.aprog.tools.Tools.getResourceAsStream;
+import static net.sourceforge.aprog.tools.Tools.writeAndClose;
+
 import imj2.zipslideviewer.ZipSlideViewer;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,6 +34,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.aprog.swing.SwingTools;
@@ -75,7 +81,7 @@ public final class Launcher {
 			@Override
 			public final void run() {
 				window[0] = show(verticalBox(
-						//action(actions, window, "README", SHOW_README)
+						action(actions, window, "README", SHOW_README),
 						action(actions, window, "Extract example", EXTRACT_EXAMPLE),
 						action(actions, window, "ModelMaker", MODEL_MAKER),
 						action(actions, window, "GenerateWSI", GENERATE_WSI),
@@ -101,7 +107,10 @@ public final class Launcher {
 			
 			switch (action) {
 			case SHOW_README:
-				// TODO
+				final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+				
+				writeAndClose(getResourceAsStream("README.txt"), true, buffer, true);
+				SwingUtilities.invokeLater(() -> show(scrollable(new JTextArea(buffer.toString())), "README", false));
 				
 				break;
 			case EXTRACT_EXAMPLE:
