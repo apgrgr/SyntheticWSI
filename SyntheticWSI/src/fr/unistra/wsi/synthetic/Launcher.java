@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.prefs.Preferences;
@@ -33,6 +34,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
@@ -182,7 +184,30 @@ public final class Launcher {
 					case GENERATE_WSI:
 						preferences.put("modelPath", arguments.getModelPath());
 						preferences.put("rendererPath", arguments.getRendererPath());
+						final AtomicBoolean abort = new AtomicBoolean(true);
+						final JProgressBar progress = new JProgressBar();
+						final Window abortWindow = show(progress, "GenerateWSI: close this window to abort", false);
+						
+						SwingUtilities.invokeLater(() -> {
+							progress.setIndeterminate(true);
+							
+							abortWindow.addWindowListener(new WindowAdapter() {
+								
+								@Override
+								public final void windowClosing(final WindowEvent event) {
+									if (abort.get()) {
+										System.exit(-1);
+									}
+								}
+								
+							});
+						});
+						
 						GenerateWSI.main(array("model", arguments.getModelPath(), "renderer", arguments.getRendererPath()));
+						
+						abort.set(false);
+						SwingUtilities.invokeLater(abortWindow::dispose);
+						
 						break;
 					}
 					

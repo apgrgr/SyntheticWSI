@@ -80,6 +80,38 @@ public final class GenerateWSI {
 	
 	static final File RENDERERS_FILE = new File("renderers.jo");
 	
+	/**
+	 * @param commandLineArguments
+	 * <br>Must not be null
+	 */
+	public static final void main(final String[] commandLineArguments) throws IOException {
+		final CommandLineArgumentsParser arguments = new CommandLineArgumentsParser(commandLineArguments);
+		final File modelFile = new File(arguments.get("model",
+				ModelMaker.preferences.get(ModelMaker.MODEL_FILE_KEY, ModelMaker.MODEL_FILE_DEFAULT_PATH)));
+		final String outputBase = arguments.get("output", baseName(modelFile.getPath()));
+		final File temporaryDirectory = new File(outputBase);
+		final File outputFile = new File(outputBase + ".zip");
+		final String outputImageName = new File(outputBase).getName();
+		final Model model = ModelMaker.readModel(modelFile);
+		final int tileWidth = arguments.get("tileWidth", 512)[0];
+		final int tileHeight = arguments.get("tileHeight", tileWidth)[0];
+		final boolean showResult = arguments.get("show", 1)[0] != 0;
+		final String rendererXMLPath = arguments.get("renderer", "");
+		final TicToc timer = new TicToc();
+		
+		if (!outputFile.exists()) {
+			System.out.println("Generating WSI... " + new Date(timer.tic()));
+			process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, rendererXMLPath);
+			subsample(temporaryDirectory, outputImageName);
+			writeWSI(temporaryDirectory, outputFile);
+			System.out.println("WSI generated in " + timer.toc() + " ms");
+		}
+		
+		if (showResult) {
+			ZipSlideViewer.main(array("file", outputFile.getPath()));
+		}
+	}
+	
 	public static final ModelRenderer newRenderer(final Model model, final String rendererXMLPath) {
 		if (RENDERERS_FILE.exists()) {
 			final ModelRenderer result = Tools.readObject(RENDERERS_FILE.getPath());
@@ -120,38 +152,6 @@ public final class GenerateWSI {
 	
 	public static final String select(final String string1, final String string2) {
 		return string1.isEmpty() ? string2 : string1;
-	}
-	
-	/**
-	 * @param commandLineArguments
-	 * <br>Must not be null
-	 */
-	public static final void main(final String[] commandLineArguments) throws IOException {
-		final CommandLineArgumentsParser arguments = new CommandLineArgumentsParser(commandLineArguments);
-		final File modelFile = new File(arguments.get("model",
-				ModelMaker.preferences.get(ModelMaker.MODEL_FILE_KEY, ModelMaker.MODEL_FILE_DEFAULT_PATH)));
-		final String outputBase = arguments.get("output", baseName(modelFile.getPath()));
-		final File temporaryDirectory = new File(outputBase);
-		final File outputFile = new File(outputBase + ".zip");
-		final String outputImageName = new File(outputBase).getName();
-		final Model model = ModelMaker.readModel(modelFile);
-		final int tileWidth = arguments.get("tileWidth", 512)[0];
-		final int tileHeight = arguments.get("tileHeight", tileWidth)[0];
-		final boolean showResult = arguments.get("show", 1)[0] != 0;
-		final String rendererXMLPath = arguments.get("renderer", "");
-		final TicToc timer = new TicToc();
-		
-		if (!outputFile.exists()) {
-			System.out.println("Generating WSI... " + new Date(timer.tic()));
-			process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, rendererXMLPath);
-			subsample(temporaryDirectory, outputImageName);
-			writeWSI(temporaryDirectory, outputFile);
-			System.out.println("WSI generated in " + timer.toc() + " ms");
-		}
-		
-		if (showResult) {
-			ZipSlideViewer.main(array("file", outputFile.getPath()));
-		}
 	}
 	
 	public static final void process(final Model model, final int tileWidth, final int tileHeight,
