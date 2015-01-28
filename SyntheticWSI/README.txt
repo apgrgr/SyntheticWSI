@@ -20,7 +20,7 @@ SyntheticWSI v201501281540
 
 	Possible issues
 	
-		* not enough memory allocated to the program
+		* Not enough memory allocated to the program
 		  Solution: use the command line to start the application with more memory:
 		            java -Xmx16g -jar syntheticwsi.jar
 
