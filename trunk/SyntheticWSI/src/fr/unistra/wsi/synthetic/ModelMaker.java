@@ -85,17 +85,17 @@ public final class ModelMaker {
 	
 	static {
 		labelColors.put("", Color.BLACK);
-		labelColors.put("H&E fat", Color.YELLOW);
-		labelColors.put("H&E stroma", Color.PINK);
-		labelColors.put("H&E loose stroma", Color.MAGENTA);
-		labelColors.put("H&E lobule", Color.BLUE);
-		labelColors.put("H&E infiltration", Color.ORANGE);
-		labelColors.put("H&E disruption", Color.CYAN);
-		labelColors.put("H&E acinus", Color.GREEN);
-		labelColors.put("H&E immune cell", Color.DARK_GRAY);
-		labelColors.put("H&E epithelial cell", Color.LIGHT_GRAY);
-		labelColors.put("H&E cancer", Color.RED);
-		labelColors.put("ALL lumen", Color.WHITE);
+		labelColors.put("fat", Color.YELLOW);
+		labelColors.put("stroma", Color.PINK);
+		labelColors.put("loose stroma", Color.MAGENTA);
+		labelColors.put("lobule", Color.BLUE);
+		labelColors.put("infiltration", Color.ORANGE);
+		labelColors.put("disruption", Color.CYAN);
+		labelColors.put("acinus", Color.GREEN);
+		labelColors.put("immune cell", Color.DARK_GRAY);
+		labelColors.put("epithelial cell", Color.LIGHT_GRAY);
+		labelColors.put("cancer", Color.RED);
+		labelColors.put("lumen", Color.WHITE);
 	}
 	
 	/**
