@@ -3,6 +3,7 @@ package fr.unistra.wsi.synthetic;
 import static imj2.tools.IMJTools.awtImage;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.min;
+import static net.sourceforge.aprog.tools.Tools.array;
 import static net.sourceforge.aprog.tools.Tools.baseName;
 import static net.sourceforge.aprog.tools.Tools.debugPrint;
 import static net.sourceforge.aprog.tools.Tools.unchecked;
@@ -21,9 +22,9 @@ import imj2.core.TiledImage2D;
 import imj2.tools.Canvas;
 import imj2.tools.IMJTools;
 import imj2.tools.IMJTools.TileProcessor;
-import imj2.tools.Image2DComponent;
 import imj2.tools.InputSource;
 import imj2.tools.OutputSource;
+import imj2.zipslideviewer.ZipSlideViewer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -149,11 +150,7 @@ public final class GenerateWSI {
 		}
 		
 		if (showResult) {
-			final Image2D image = new MultiFileImage2D(outputFile.getPath());
-			
-			Tools.debugPrint(image.getWidth(), image.getHeight());
-			
-			Image2DComponent.show(image);
+			ZipSlideViewer.main(array("file", outputFile.getPath()));
 		}
 	}
 	
