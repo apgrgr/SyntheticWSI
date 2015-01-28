@@ -6,6 +6,7 @@ import static imj2.tools.CommonSwingTools.showEditDialog;
 import static net.sourceforge.aprog.swing.SwingTools.show;
 import static net.sourceforge.aprog.swing.SwingTools.verticalBox;
 import static net.sourceforge.aprog.tools.Tools.array;
+import imj2.zipslideviewer.ZipSlideViewer;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -76,8 +78,8 @@ public final class Launcher {
 						//action(actions, window, "README", SHOW_README)
 						action(actions, window, "Extract example", EXTRACT_EXAMPLE),
 						action(actions, window, "ModelMaker", MODEL_MAKER),
-						action(actions, window, "GenerateWSI", GENERATE_WSI)
-//						action(actions, window, "ViewWSI", VIEW_WSI)
+						action(actions, window, "GenerateWSI", GENERATE_WSI),
+						action(actions, window, "ViewWSI", VIEW_WSI)
 						), "SyntheticWSI", false);
 				
 				window[0].addWindowListener(new WindowAdapter() {
@@ -106,7 +108,31 @@ public final class Launcher {
 				final File applicationFile = Tools.getApplicationFile();
 				
 				if (applicationFile.isDirectory()) {
-					// TODO
+					final File sourceData = new File(applicationFile.getParentFile(), "lib/data");
+					final File targetData = new File("data");
+					
+					process(sourceData, new FileProcessor() {
+						
+						@Override
+						public final Control file(final File file) {
+							if (file.isFile()) {
+								final File target = new File(targetData, file.getPath().substring(sourceData.getPath().length()));
+								
+								target.getParentFile().mkdirs();
+								
+								try {
+									Files.copy(file.toPath(), target.toPath());
+								} catch (final IOException exception) {
+									exception.printStackTrace();
+								}
+							}
+							
+							return file.isDirectory() ? Control.ENTER : Control.CONTINUE;
+						}
+						
+						private static final long serialVersionUID = 4487138895065647165L;
+						
+					});
 				} else {
 					try (final JarFile jarFile = new JarFile(applicationFile)) {
 						for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
@@ -126,9 +152,13 @@ public final class Launcher {
 				
 				break;
 			case MODEL_MAKER:
+				window[0].dispose();
 				ModelMaker.main(array());
+				action = QUIT;
 				break;
 			case GENERATE_WSI:
+				window[0].dispose();
+				
 				final GenerateWSIArguments arguments = new GenerateWSIArguments()
 					.setModelPath(preferences.get("modelPath", pathOrEmpty("data/SYN_NB_01_001.xml")))
 					.setRendererPath(preferences.get("rendererPath", pathOrEmpty("data/textures/he_renderer.xml")));
@@ -147,12 +177,19 @@ public final class Launcher {
 					break;
 				}
 				
+				action = QUIT;
 				break;
 			case VIEW_WSI:
-				// TODO
+				window[0].dispose();
+				ZipSlideViewer.main(array());
+				action = QUIT;
 				break;
 			}
 		} while (action != QUIT);
+		
+		if (window[0] != null) {
+			SwingUtilities.invokeLater(window[0]::dispose);
+		}
 	}
 	
 	public static final String pathOrEmpty(final String path) {
@@ -170,6 +207,44 @@ public final class Launcher {
 			private static final long serialVersionUID = 7297715238510494272L;
 			
 		}));
+	}
+	
+	public static final FileProcessor.Control process(final File file, final FileProcessor processor) {
+		final FileProcessor.Control result = processor.file(file);
+		
+		if (FileProcessor.Control.ENTER.equals(result)) {
+			final File[] subfiles = file.listFiles();
+			
+			if (subfiles != null) {
+				for (final File subfile : subfiles) {
+					if (!FileProcessor.Control.CONTINUE.equals(process(subfile, processor))) {
+						return FileProcessor.Control.STOP;
+					}
+				}
+			}
+			
+			return FileProcessor.Control.CONTINUE;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * @author greg (creation 2015-01-28)
+	 */
+	public static abstract interface FileProcessor extends Serializable {
+		
+		public abstract Control file(File file);
+		
+		/**
+		 * @author greg (creation 2015-01-28)
+		 */
+		public static enum Control {
+			
+			CONTINUE, ENTER, STOP; 
+			
+		}
+		
 	}
 	
 	/**
