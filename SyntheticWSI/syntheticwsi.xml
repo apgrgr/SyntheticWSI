@@ -8,6 +8,8 @@
                 <attribute name="Main-Class" value="fr.unistra.wsi.synthetic.Launcher"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
+            <fileset file="syntheticwsi_license.txt"/>
+            <fileset file="README.txt"/>
             <fileset dir="src"/>
             <fileset dir="bin"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/aprog.jar"/>

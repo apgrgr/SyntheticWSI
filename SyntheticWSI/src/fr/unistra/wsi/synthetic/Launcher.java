@@ -9,7 +9,6 @@ import static net.sourceforge.aprog.swing.SwingTools.verticalBox;
 import static net.sourceforge.aprog.tools.Tools.array;
 import static net.sourceforge.aprog.tools.Tools.getResourceAsStream;
 import static net.sourceforge.aprog.tools.Tools.writeAndClose;
-
 import imj2.zipslideviewer.ZipSlideViewer;
 
 import java.awt.Window;
@@ -102,102 +101,107 @@ public final class Launcher {
 		
 		int action;
 		
-		do {
-			action = actions.take();
-			
-			switch (action) {
-			case SHOW_README:
-				final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		try {
+			do {
+				action = actions.take();
 				
-				writeAndClose(getResourceAsStream("README.txt"), true, buffer, true);
-				SwingUtilities.invokeLater(() -> show(scrollable(new JTextArea(buffer.toString())), "README", false));
-				
-				break;
-			case EXTRACT_EXAMPLE:
-				final File applicationFile = Tools.getApplicationFile();
-				
-				if (applicationFile.isDirectory()) {
-					final File sourceData = new File(applicationFile.getParentFile(), "lib/data");
-					final File targetData = new File("data");
+				switch (action) {
+				case SHOW_README:
+					final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 					
-					process(sourceData, new FileProcessor() {
+					writeAndClose(getResourceAsStream("README.txt"), true, buffer, true);
+					SwingUtilities.invokeLater(() -> show(scrollable(new JTextArea(buffer.toString())), "README", false));
+					
+					break;
+				case EXTRACT_EXAMPLE:
+					final File applicationFile = Tools.getApplicationFile();
+					
+					if (applicationFile.isDirectory()) {
+						final File sourceData = new File(applicationFile.getParentFile(), "lib/data");
+						final File targetData = new File("data");
 						
-						@Override
-						public final Control file(final File file) {
-							if (file.isFile()) {
-								final File target = new File(targetData, file.getPath().substring(sourceData.getPath().length()));
-								
-								target.getParentFile().mkdirs();
-								
-								try {
-									Files.copy(file.toPath(), target.toPath());
-								} catch (final IOException exception) {
-									exception.printStackTrace();
+						process(sourceData, new FileProcessor() {
+							
+							@Override
+							public final Control file(final File file) {
+								if (file.isFile()) {
+									final File target = new File(targetData, file.getPath().substring(sourceData.getPath().length()));
+									
+									target.getParentFile().mkdirs();
+									
+									try {
+										Files.copy(file.toPath(), target.toPath());
+									} catch (final IOException exception) {
+										exception.printStackTrace();
+									}
 								}
+								
+								return file.isDirectory() ? Control.ENTER : Control.CONTINUE;
 							}
 							
-							return file.isDirectory() ? Control.ENTER : Control.CONTINUE;
-						}
-						
-						private static final long serialVersionUID = 4487138895065647165L;
-						
-					});
-				} else {
-					try (final JarFile jarFile = new JarFile(applicationFile)) {
-						for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
-							if (entry.getName().startsWith("data/") && !entry.isDirectory()) {
-								final File target = new File(entry.getName());
-								
-								target.getParentFile().mkdirs();
-								
-								try (final InputStream input = jarFile.getInputStream(entry);
-										final OutputStream output = new FileOutputStream(target)) {
-									Tools.writeAndClose(input, false, output, false);
+							private static final long serialVersionUID = 4487138895065647165L;
+							
+						});
+					} else {
+						try (final JarFile jarFile = new JarFile(applicationFile)) {
+							for (final JarEntry entry : Tools.iterable(jarFile.entries())) {
+								if (entry.getName().startsWith("data/") && !entry.isDirectory()) {
+									final File target = new File(entry.getName());
+									
+									target.getParentFile().mkdirs();
+									
+									try (final InputStream input = jarFile.getInputStream(entry);
+											final OutputStream output = new FileOutputStream(target)) {
+										Tools.writeAndClose(input, false, output, false);
+									}
 								}
 							}
 						}
 					}
-				}
-				
-				break;
-			case MODEL_MAKER:
-				window[0].dispose();
-				ModelMaker.main(array());
-				action = QUIT;
-				break;
-			case GENERATE_WSI:
-				window[0].dispose();
-				
-				final GenerateWSIArguments arguments = new GenerateWSIArguments()
-					.setModelPath(preferences.get("modelPath", pathOrEmpty("data/SYN_NB_01_001.xml")))
-					.setRendererPath(preferences.get("rendererPath", pathOrEmpty("data/textures/he_renderer.xml")));
-				
-				SwingUtilities.invokeLater(() -> showEditDialog("GenerateWSI",
-						() ->  actions.offer(GENERATE_WSI),
-						() ->  actions.offer(QUIT),
-						property("Model path:", arguments::getModelPath, arguments::setModelPath),
-						property("Renderer path:", arguments::getRendererPath, arguments::setRendererPath)));
-				
-				switch (actions.take()) {
+					
+					break;
+				case MODEL_MAKER:
+					window[0].dispose();
+					ModelMaker.main(array());
+					action = QUIT;
+					break;
 				case GENERATE_WSI:
-					preferences.put("modelPath", arguments.getModelPath());
-					preferences.put("rendererPath", arguments.getRendererPath());
-					GenerateWSI.main(array("model", arguments.getModelPath(), "renderer", arguments.getRendererPath()));
+					window[0].dispose();
+					
+					final GenerateWSIArguments arguments = new GenerateWSIArguments()
+						.setModelPath(preferences.get("modelPath", pathOrEmpty("data/SYN_NB_01_001.xml")))
+						.setRendererPath(preferences.get("rendererPath", pathOrEmpty("data/textures/he_renderer.xml")));
+					
+					SwingUtilities.invokeLater(() -> showEditDialog("GenerateWSI",
+							() ->  actions.offer(GENERATE_WSI),
+							() ->  actions.offer(QUIT),
+							property("Model path:", arguments::getModelPath, arguments::setModelPath),
+							property("Renderer path:", arguments::getRendererPath, arguments::setRendererPath)));
+					
+					switch (actions.take()) {
+					case GENERATE_WSI:
+						preferences.put("modelPath", arguments.getModelPath());
+						preferences.put("rendererPath", arguments.getRendererPath());
+						GenerateWSI.main(array("model", arguments.getModelPath(), "renderer", arguments.getRendererPath()));
+						break;
+					}
+					
+					action = QUIT;
+					break;
+				case VIEW_WSI:
+					window[0].dispose();
+					ZipSlideViewer.main(array());
+					action = QUIT;
 					break;
 				}
-				
-				action = QUIT;
-				break;
-			case VIEW_WSI:
-				window[0].dispose();
-				ZipSlideViewer.main(array());
-				action = QUIT;
-				break;
+			} while (action != QUIT);
+			
+			if (window[0] != null) {
+				SwingUtilities.invokeLater(window[0]::dispose);
 			}
-		} while (action != QUIT);
-		
-		if (window[0] != null) {
-			SwingUtilities.invokeLater(window[0]::dispose);
+		} catch (final Exception exception) {
+			exception.printStackTrace();
+			System.exit(-1);
 		}
 	}
 	
