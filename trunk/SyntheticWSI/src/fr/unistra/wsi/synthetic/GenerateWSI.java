@@ -140,11 +140,13 @@ public final class GenerateWSI {
 		final String rendererXMLPath = arguments.get("renderer", "");
 		final TicToc timer = new TicToc();
 		
-		System.out.println("Generating WSI... " + new Date(timer.tic()));
-		process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, rendererXMLPath);
-		subsample(temporaryDirectory, outputImageName);
-		writeWSI(temporaryDirectory, outputFile);
-		System.out.println("WSI generated in " + timer.toc() + " ms");
+		if (!outputFile.exists()) {
+			System.out.println("Generating WSI... " + new Date(timer.tic()));
+			process(model, tileWidth, tileHeight, temporaryDirectory, outputImageName, rendererXMLPath);
+			subsample(temporaryDirectory, outputImageName);
+			writeWSI(temporaryDirectory, outputFile);
+			System.out.println("WSI generated in " + timer.toc() + " ms");
+		}
 		
 		if (showResult) {
 			final Image2D image = new MultiFileImage2D(outputFile.getPath());
