@@ -1,4 +1,4 @@
-SyntheticWSI v201501281540
+SyntheticWSI v201501281905
 
 	Requirements
 	
@@ -40,3 +40,16 @@ SyntheticWSI v201501281540
 		
 		* ViewWSI
 			Start the tool to visualize WSIs (drag and drop images from OS to open them)
+
+	Command line interface
+	
+		* ModelMaker
+			java -cp syntheticwsi.jar fr.unistra.wsi.synthetic.ModelMaker
+		
+		* GenerateWSI
+			java -cp syntheticwsi.jar fr.unistra.wsi.synthetic.GenerateWSI
+				[model <file path>] [renderer <file path>] [output <file path>]
+				[tileWidth <integer>] [tileHeight <integer>] [show <0|1>]
+		
+		* ViewWSI
+			java -cp syntheticwsi.jar imj2.zipslideviewer.ZipSlideViewer [file <file path>]
