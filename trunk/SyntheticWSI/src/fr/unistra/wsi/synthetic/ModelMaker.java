@@ -162,6 +162,7 @@ public final class ModelMaker {
 	
 	public static final void setupControllers(final Model model, final VirtualCanvasComponent view) {
 		final AtomicBoolean showBackground = new AtomicBoolean(true);
+		final AtomicBoolean showGraph = new AtomicBoolean(false);
 		
 		view.getPainters().add(new Painter<VirtualCanvasComponent>() {
 			
@@ -229,18 +230,20 @@ public final class ModelMaker {
 							0F));
 					viewportGraphics.setColor(new Color(0x80000000, true));
 					
-					for (final Region region : model.getRegions(1.0)) {
-						final Region parent = region.getParent();
-						
-						if (parent != null) {
-							final Rectangle regionBounds = region.getGeometry().getBounds();
-							final Rectangle parentBounds = parent.getGeometry().getBounds();
+					if (showGraph.get()) {
+						for (final Region region : model.getRegions(1.0)) {
+							final Region parent = region.getParent();
 							
-							viewportGraphics.drawLine(
-									(int) parentBounds.getCenterX(),
-									(int) parentBounds.getCenterY(),
-									(int) regionBounds.getCenterX(),
-									(int) regionBounds.getCenterY());
+							if (parent != null) {
+								final Rectangle regionBounds = region.getGeometry().getBounds();
+								final Rectangle parentBounds = parent.getGeometry().getBounds();
+								
+								viewportGraphics.drawLine(
+										(int) parentBounds.getCenterX(),
+										(int) parentBounds.getCenterY(),
+										(int) regionBounds.getCenterX(),
+										(int) regionBounds.getCenterY());
+							}
 						}
 					}
 					
@@ -290,6 +293,9 @@ public final class ModelMaker {
 					view.refreshViewport();
 				} else if (event.getKeyCode() == KeyEvent.VK_B) {
 					showBackground.set(!showBackground.get());
+					view.refreshViewport();
+				} else if (event.getKeyCode() == KeyEvent.VK_G) {
+					showGraph.set(!showGraph.get());
 					view.refreshViewport();
 				} else if (isMetaDown(event) && event.getKeyCode() == KeyEvent.VK_C) {
 					final BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
