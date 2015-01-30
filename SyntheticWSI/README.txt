@@ -1,8 +1,8 @@
-SyntheticWSI v201501281905
+SyntheticWSI v201501300946
 
 	Requirements
 	
-		Java 8
+		Java 8+
 
 	Quick start
 	
