@@ -34,6 +34,17 @@ SyntheticWSI v201501281905
 		
 		* ModelMaker
 			Start the tool to make "models" = 2D digital phantoms
+			Ctrl+N: new texture/model
+			Ctrl+O: open a texture/model file (XML) or load a background image (JPG, PNG, SVS)
+			Ctrl+S: save the current texture/model
+			Ctrl+C: copy current view to OS clipboard
+			B: show/hide background image
+			+/-: zoom in/out
+			Ctrl+Left click: start new region
+			Drag motion with left mouse button: extend current region
+			Shift+Drag motion with left mouse button: reduce current region
+			Right click: select texture
+			(Mac OS X: use Cmd instead of Ctrl)
 		
 		* GenerateWSI
 			Start the tool to generate a WSI (format = zipped JPG tiles)
