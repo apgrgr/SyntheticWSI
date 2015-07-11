@@ -2,7 +2,7 @@ package imj2.tools;
 
 import java.io.Serializable;
 
-import jgencode.primitivelists.LongList;
+import multij.primitivelists.LongList;
 
 /**
  * @author codistmonk (creation 2014-09-16)

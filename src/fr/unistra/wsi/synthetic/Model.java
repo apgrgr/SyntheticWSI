@@ -6,9 +6,9 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.util.stream.Collectors.toList;
-import static net.sourceforge.aprog.tools.Tools.readObject;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
-import static net.sourceforge.aprog.tools.Tools.writeObject;
+import static multij.tools.Tools.readObject;
+import static multij.tools.Tools.unchecked;
+import static multij.tools.Tools.writeObject;
 import imj2.core.Image2D;
 import imj2.tools.LociBackedImage;
 
@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.aprog.tools.Tools;
-import net.sourceforge.aprog.xml.XMLTools;
+import multij.tools.Tools;
+import multij.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -4,8 +4,8 @@ import static imj2.tools.IMJTools.newC4U8ConcreteImage2D;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Collections.synchronizedMap;
-import static net.sourceforge.aprog.swing.SwingTools.horizontalBox;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.swing.SwingTools.horizontalBox;
+import static multij.tools.Tools.unchecked;
 import imj2.core.Image2D;
 import imj2.core.Image2D.MonopatchProcess;
 import imj2.core.ScaledImage2D;
@@ -41,8 +41,8 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.aprog.swing.SwingTools;
-import net.sourceforge.aprog.tools.Tools;
+import multij.swing.SwingTools;
+import multij.tools.Tools;
 
 /**
  * @author codistmonk (creation 2013-08-05)

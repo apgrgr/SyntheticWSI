@@ -1,6 +1,6 @@
 package fr.unistra.wsi.synthetic;
 
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.tools.Tools.unchecked;
 import static fr.unistra.wsi.synthetic.GenerateWSI.MAXIMUM_CPU_LOAD;
 import static fr.unistra.wsi.synthetic.GenerateWSI.RENDERERS_FILE;
 
@@ -22,8 +22,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.aprog.tools.TaskManager;
-import net.sourceforge.aprog.tools.Tools;
+import multij.tools.TaskManager;
+import multij.tools.Tools;
 
 /**
  * @author ga (creation 2014-09-16)

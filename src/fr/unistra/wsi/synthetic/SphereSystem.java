@@ -6,8 +6,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static net.sourceforge.aprog.tools.MathTools.square;
-import static net.sourceforge.aprog.tools.Tools.intRange;
+import static multij.tools.MathTools.square;
+import static multij.tools.Tools.intRange;
 
 import imj2.pixel3d.OrthographicRenderer;
 import imj2.pixel3d.OrthographicRenderer.IntComparator;
@@ -15,11 +15,11 @@ import imj2.pixel3d.OrthographicRenderer.IntComparator;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import jgencode.primitivelists.DoubleList;
-import jgencode.primitivelists.IntList;
-import jgencode.primitivelists.LongList;
+import multij.primitivelists.DoubleList;
+import multij.primitivelists.IntList;
+import multij.primitivelists.LongList;
 
-import net.sourceforge.aprog.tools.Tools;
+import multij.tools.Tools;
 
 /**
  * @author ga (creation 2014-05-22)

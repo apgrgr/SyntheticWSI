@@ -1,6 +1,6 @@
 package imj2.tools;
 
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.tools.Tools.unchecked;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
-import net.sourceforge.aprog.tools.SystemProperties;
+import multij.tools.IllegalInstantiationException;
+import multij.tools.SystemProperties;
 
 /**
  * @author codistmonk (creation 2013-08-15)

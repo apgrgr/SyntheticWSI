@@ -9,7 +9,7 @@ import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static net.sourceforge.aprog.tools.MathTools.square;
+import static multij.tools.MathTools.square;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

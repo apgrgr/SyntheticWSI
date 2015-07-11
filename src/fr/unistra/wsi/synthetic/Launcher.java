@@ -3,12 +3,12 @@ package fr.unistra.wsi.synthetic;
 import static imj2.tools.CommonSwingTools.center;
 import static imj2.tools.CommonSwingTools.property;
 import static imj2.tools.CommonSwingTools.showEditDialog;
-import static net.sourceforge.aprog.swing.SwingTools.scrollable;
-import static net.sourceforge.aprog.swing.SwingTools.show;
-import static net.sourceforge.aprog.swing.SwingTools.verticalBox;
-import static net.sourceforge.aprog.tools.Tools.array;
-import static net.sourceforge.aprog.tools.Tools.getResourceAsStream;
-import static net.sourceforge.aprog.tools.Tools.writeAndClose;
+import static multij.swing.SwingTools.scrollable;
+import static multij.swing.SwingTools.show;
+import static multij.swing.SwingTools.verticalBox;
+import static multij.tools.Tools.array;
+import static multij.tools.Tools.getResourceAsStream;
+import static multij.tools.Tools.writeAndClose;
 import imj2.zipslideviewer.ZipSlideViewer;
 
 import java.awt.Window;
@@ -38,9 +38,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.aprog.swing.SwingTools;
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
-import net.sourceforge.aprog.tools.Tools;
+import multij.swing.SwingTools;
+import multij.tools.IllegalInstantiationException;
+import multij.tools.Tools;
 
 /**
  * @author ga (creation 2015-01-27)

@@ -7,7 +7,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.util.Collections.synchronizedMap;
 import static java.util.stream.Collectors.toList;
-import static net.sourceforge.aprog.tools.MathTools.square;
+import static multij.tools.MathTools.square;
 import static fr.unistra.wsi.synthetic.GenerateWSI.CONSTRAINT_SOLVER_MAXIMUM_MILLISECONDS;
 import static fr.unistra.wsi.synthetic.GenerateWSI.RANDOM;
 
@@ -34,9 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import net.sourceforge.aprog.tools.ConsoleMonitor;
-import net.sourceforge.aprog.tools.TicToc;
-import net.sourceforge.aprog.tools.Tools;
+import multij.tools.ConsoleMonitor;
+import multij.tools.TicToc;
+import multij.tools.Tools;
 
 /**
  * @author ga (creation 2014-09-12)

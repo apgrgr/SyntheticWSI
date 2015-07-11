@@ -3,14 +3,14 @@ package fr.unistra.wsi.synthetic;
 import static imj2.tools.IMJTools.awtImage;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.min;
-import static net.sourceforge.aprog.tools.Tools.array;
-import static net.sourceforge.aprog.tools.Tools.baseName;
-import static net.sourceforge.aprog.tools.Tools.debugPrint;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
-import static net.sourceforge.aprog.xml.XMLTools.getNode;
-import static net.sourceforge.aprog.xml.XMLTools.getNodes;
-import static net.sourceforge.aprog.xml.XMLTools.getNumber;
-import static net.sourceforge.aprog.xml.XMLTools.parse;
+import static multij.tools.Tools.array;
+import static multij.tools.Tools.baseName;
+import static multij.tools.Tools.debugPrint;
+import static multij.tools.Tools.unchecked;
+import static multij.xml.XMLTools.getNode;
+import static multij.xml.XMLTools.getNodes;
+import static multij.xml.XMLTools.getNumber;
+import static multij.xml.XMLTools.parse;
 
 import imj2.core.ConcreteImage2D;
 import imj2.core.IMJCoreTools;
@@ -47,13 +47,13 @@ import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 
-import net.sourceforge.aprog.tools.CommandLineArgumentsParser;
-import net.sourceforge.aprog.tools.ConsoleMonitor;
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
-import net.sourceforge.aprog.tools.TaskManager;
-import net.sourceforge.aprog.tools.TicToc;
-import net.sourceforge.aprog.tools.Tools;
-import net.sourceforge.aprog.xml.XMLTools;
+import multij.tools.CommandLineArgumentsParser;
+import multij.tools.ConsoleMonitor;
+import multij.tools.IllegalInstantiationException;
+import multij.tools.TaskManager;
+import multij.tools.TicToc;
+import multij.tools.Tools;
+import multij.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

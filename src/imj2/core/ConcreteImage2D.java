@@ -1,6 +1,6 @@
 package imj2.core;
 
-import static net.sourceforge.aprog.tools.Tools.cast;
+import static multij.tools.Tools.cast;
 
 /**
  * @author codistmonk (creation 2013-08-04)

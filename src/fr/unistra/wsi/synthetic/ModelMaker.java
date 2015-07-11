@@ -2,13 +2,13 @@ package fr.unistra.wsi.synthetic;
 
 import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
 import static java.lang.Math.min;
-import static net.sourceforge.aprog.swing.SwingTools.show;
-import static net.sourceforge.aprog.swing.SwingTools.useSystemLookAndFeel;
-import static net.sourceforge.aprog.tools.Tools.array;
-import static net.sourceforge.aprog.tools.Tools.baseName;
-import static net.sourceforge.aprog.tools.Tools.invoke;
-import static net.sourceforge.aprog.tools.Tools.readObject;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.swing.SwingTools.show;
+import static multij.swing.SwingTools.useSystemLookAndFeel;
+import static multij.tools.Tools.array;
+import static multij.tools.Tools.baseName;
+import static multij.tools.Tools.invoke;
+import static multij.tools.Tools.readObject;
+import static multij.tools.Tools.unchecked;
 
 import imj2.core.Image2D;
 import imj2.pixel3d.MouseHandler;
@@ -56,9 +56,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
-import net.sourceforge.aprog.tools.Tools;
-import net.sourceforge.aprog.xml.XMLTools;
+import multij.tools.IllegalInstantiationException;
+import multij.tools.Tools;
+import multij.xml.XMLTools;
 
 /**
  * @author ga (creation 2014-09-05)

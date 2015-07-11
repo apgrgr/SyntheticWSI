@@ -4,8 +4,8 @@ import static imj2.core.ConcreteImage2D.getX;
 import static imj2.core.ConcreteImage2D.getY;
 import static imj2.core.IMJCoreTools.quantize;
 import static java.lang.Math.min;
-import static net.sourceforge.aprog.tools.Tools.cast;
-import jgencode.primitivelists.IntList;
+import static multij.tools.Tools.cast;
+import multij.primitivelists.IntList;
 
 /**
  * @author codistmonk (creation 2013-08-07)

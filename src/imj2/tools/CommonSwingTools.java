@@ -1,6 +1,6 @@
 package imj2.tools;
 
-import static net.sourceforge.aprog.swing.SwingTools.horizontalBox;
+import static multij.swing.SwingTools.horizontalBox;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -22,8 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.aprog.swing.SwingTools;
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
+import multij.swing.SwingTools;
+import multij.tools.IllegalInstantiationException;
 
 /**
  * @author codistmonk (creation 2015-01-27)

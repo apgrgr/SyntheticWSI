@@ -1,6 +1,6 @@
 package imj2.tools;
 
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.tools.Tools.unchecked;
 
 import java.io.BufferedOutputStream;
 import java.io.Closeable;

@@ -1,7 +1,7 @@
 package imj2.tools;
 
-import static net.sourceforge.aprog.tools.Tools.iterable;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.tools.Tools.iterable;
+import static multij.tools.Tools.unchecked;
 
 import java.io.Closeable;
 import java.io.File;

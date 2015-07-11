@@ -1,10 +1,10 @@
 package imj2.zipslideviewer;
 
-import static net.sourceforge.aprog.tools.Tools.baseName;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
-import static net.sourceforge.aprog.xml.XMLTools.getNode;
-import static net.sourceforge.aprog.xml.XMLTools.getNumber;
-import static net.sourceforge.aprog.xml.XMLTools.parse;
+import static multij.tools.Tools.baseName;
+import static multij.tools.Tools.unchecked;
+import static multij.xml.XMLTools.getNode;
+import static multij.xml.XMLTools.getNumber;
+import static multij.xml.XMLTools.parse;
 
 import imj2.core.IMJCoreTools;
 import imj2.core.Image;
@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 
 import javax.imageio.ImageIO;
 
-import net.sourceforge.aprog.xml.XMLTools;
+import multij.xml.XMLTools;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

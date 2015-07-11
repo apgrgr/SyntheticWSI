@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.io.Serializable;
 
-import net.sourceforge.aprog.tools.Factory.DefaultFactory;
+import multij.tools.Factory.DefaultFactory;
 
 /**
  * @author codistmonk (creation 2014-04-27)

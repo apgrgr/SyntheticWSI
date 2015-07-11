@@ -3,9 +3,9 @@ package imj2.zipslideviewer;
 import static java.lang.Math.cos;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
-import static net.sourceforge.aprog.swing.SwingTools.scrollable;
-import static net.sourceforge.aprog.swing.SwingTools.useSystemLookAndFeel;
-import static net.sourceforge.aprog.tools.Tools.cast;
+import static multij.swing.SwingTools.scrollable;
+import static multij.swing.SwingTools.useSystemLookAndFeel;
+import static multij.tools.Tools.cast;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -59,12 +59,12 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import net.sourceforge.aprog.events.EventManager;
-import net.sourceforge.aprog.events.EventManager.AbstractEvent;
-import net.sourceforge.aprog.swing.SwingTools;
-import net.sourceforge.aprog.tools.CommandLineArgumentsParser;
-import net.sourceforge.aprog.tools.IllegalInstantiationException;
-import net.sourceforge.aprog.tools.Tools;
+import multij.events.EventManager;
+import multij.events.EventManager.AbstractEvent;
+import multij.swing.SwingTools;
+import multij.tools.CommandLineArgumentsParser;
+import multij.tools.IllegalInstantiationException;
+import multij.tools.Tools;
 
 /**
  * @author codistmonk (creation 2014-11-04)

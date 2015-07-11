@@ -2,8 +2,8 @@ package fr.unistra.wsi.synthetic;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
-import static net.sourceforge.aprog.tools.MathTools.square;
-import static net.sourceforge.aprog.tools.Tools.cast;
+import static multij.tools.MathTools.square;
+import static multij.tools.Tools.cast;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;

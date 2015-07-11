@@ -2,7 +2,7 @@ package imj2.tools;
 
 import static imj2.core.IMJCoreTools.cache;
 import static java.lang.Math.min;
-import static net.sourceforge.aprog.tools.Tools.unchecked;
+import static multij.tools.Tools.unchecked;
 import imj2.core.ConcreteImage2D;
 import imj2.core.DefaultColorModel;
 import imj2.core.FilteredTiledImage2D;
@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import net.sourceforge.aprog.tools.Tools;
+import multij.tools.Tools;
 
 /**
  * @author codistmonk (creation 2013-08-07)
