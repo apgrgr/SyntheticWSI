@@ -3,6 +3,7 @@ package fr.unistra.wsi.synthetic;
 import static multij.tools.Tools.*;
 import static multij.xml.XMLTools.parse;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
@@ -15,6 +16,7 @@ import org.w3c.dom.Element;
 
 import multij.tools.CommandLineArgumentsParser;
 import multij.tools.IllegalInstantiationException;
+import multij.tools.Tools;
 import multij.xml.XMLTools;
 
 /**
@@ -40,18 +42,35 @@ public final class Model2SVG {
 		final Model model = ModelMaker.readModel(modelFile);
 		final File outputFile = new File(outputBase + ".svg");
 		final String[] labels = Arrays.stream(arguments.get("labels", "").split(",")).filter(s -> !s.trim().isEmpty()).toArray(String[]::new);
+		final String[] classIds = Arrays.stream(arguments.get("classIds", Tools.join(",", intRange(labels.length))).split(",")).filter(s -> !s.trim().isEmpty()).toArray(String[]::new);
 		
 		debugPrint(modelFile, "->", outputFile);
 		debugPrint("regionCount:", model.getRegions().size());
 		debugPrint("availableLabels:", model.getRegions().stream().map(Region::getLabel).collect(Collectors.toSet()));
 		
-		Arrays.sort(labels);
+		{
+			final int[] indices = intRange(labels.length);
+			
+			sort(indices, (i1, i2) -> labels[i1].compareTo(labels[i2]));
+			
+			final String[] labelsCopy = Arrays.copyOf(labels, labels.length);
+			final String[] classIdsCopy = Arrays.copyOf(classIds, labels.length);
+			
+			for (int i = 0; i < labels.length; ++i) {
+				labels[i] = labelsCopy[indices[i]];
+				classIds[i] = classIdsCopy[indices[i]];
+			}
+		}
 		
-		final Document svg = parse("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:imj=\"IMJ\"/>");
+		final Rectangle bounds = model.getBounds();
+		debugPrint("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:imj=\"IMJ\" width=\"" + (bounds.width + 1) + "\" height=\"" + (bounds.height + 1) + "\">");
+		final Document svg = parse("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:imj=\"IMJ\" width=\"" + (bounds.width + 1) + "\" height=\"" + (bounds.height + 1) + "\"/>");
 		
 		for (final Region region : model.getRegions()) {
-			if (labels.length == 0 || 0 <= Arrays.binarySearch(labels, region.getLabel())) {
-				addTo(svg, region.getGeometry(), ModelMaker.labelColors.get(region.getLabel()).getRGB(), region.getLabel());
+			final int i = Arrays.binarySearch(labels, region.getLabel());
+			
+			if (labels.length == 0 || 0 <= i) {
+				addTo(svg, region.getGeometry(), ModelMaker.labelColors.get(region.getLabel()).getRGB(), 0 <= i ? classIds[i] : region.getLabel());
 			}
 		}
 		
