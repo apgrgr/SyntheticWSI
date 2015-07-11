@@ -60,7 +60,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * @author greg (creation 2014-09-09)
+ * @author ga (creation 2014-09-09)
  */
 public final class GenerateWSI {
 	
@@ -378,7 +378,7 @@ public final class GenerateWSI {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class MultiFileImage2D extends TiledImage2D {
 		
@@ -569,7 +569,7 @@ public final class GenerateWSI {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-14)
+	 * @author ga (creation 2014-09-14)
 	 */
 	public static final class IdManager<T> implements Serializable {
 		

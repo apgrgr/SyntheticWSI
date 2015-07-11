@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import java.io.Serializable;
 
 /**
- * @author greg (creation 2014-09-12)
+ * @author ga (creation 2014-09-12)
  */
 public abstract interface RegionRenderer extends Serializable {
 	

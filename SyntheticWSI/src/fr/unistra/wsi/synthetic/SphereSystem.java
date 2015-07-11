@@ -22,7 +22,7 @@ import jgencode.primitivelists.LongList;
 import net.sourceforge.aprog.tools.Tools;
 
 /**
- * @author greg (creation 2014-05-22)
+ * @author ga (creation 2014-05-22)
  */
 public final class SphereSystem implements Serializable {
 	

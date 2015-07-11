@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 /**
- * @author greg (creation 2014)
+ * @author ga (creation 2014)
  */
 public final class Region implements Serializable {
 	
@@ -313,7 +313,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static abstract interface PathElement extends Serializable {
 		
@@ -332,7 +332,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class ClosePath implements PathElement {
 		
@@ -381,7 +381,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class MoveTo implements PathElement {
 		
@@ -441,7 +441,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class LineTo implements PathElement {
 		
@@ -501,7 +501,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class QuadTo implements PathElement {
 		
@@ -567,7 +567,7 @@ public final class Region implements Serializable {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-09)
+	 * @author ga (creation 2014-09-09)
 	 */
 	public static final class CurveTo implements PathElement {
 		

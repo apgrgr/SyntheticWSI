@@ -43,7 +43,7 @@ import net.sourceforge.aprog.tools.IllegalInstantiationException;
 import net.sourceforge.aprog.tools.Tools;
 
 /**
- * @author greg (creation 2015-01-27)
+ * @author ga (creation 2015-01-27)
  */
 public final class Launcher {
 	
@@ -268,14 +268,14 @@ public final class Launcher {
 	}
 	
 	/**
-	 * @author greg (creation 2015-01-28)
+	 * @author ga (creation 2015-01-28)
 	 */
 	public static abstract interface FileProcessor extends Serializable {
 		
 		public abstract Control file(File file);
 		
 		/**
-		 * @author greg (creation 2015-01-28)
+		 * @author ga (creation 2015-01-28)
 		 */
 		public static enum Control {
 			
@@ -286,7 +286,7 @@ public final class Launcher {
 	}
 	
 	/**
-	 * @author greg (creation 2015-01-27)
+	 * @author ga (creation 2015-01-27)
 	 */
 	public static final class GenerateWSIArguments implements Serializable {
 		

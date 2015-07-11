@@ -61,7 +61,7 @@ import net.sourceforge.aprog.tools.Tools;
 import net.sourceforge.aprog.xml.XMLTools;
 
 /**
- * @author greg (creation 2014-09-05)
+ * @author ga (creation 2014-09-05)
  */
 public final class ModelMaker {
 	
@@ -712,7 +712,7 @@ public final class ModelMaker {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-06)
+	 * @author ga (creation 2014-09-06)
 	 */
 	public static final class ColorInversionComposite implements java.awt.Composite {
 		

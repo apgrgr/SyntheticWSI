@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author greg (creation 2014-09-07)
+ * @author ga (creation 2014-09-07)
  * 
  * @param <T>
  */

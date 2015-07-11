@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
 import fr.unistra.wsi.synthetic.Region.PathElement;
 
 /**
- * @author greg (creation 2014-09-06)
+ * @author ga (creation 2014-09-06)
  */
 public final class Model implements Serializable {
 	
@@ -274,7 +274,7 @@ public final class Model implements Serializable {
 	private static final long serialVersionUID = -4459968950008736912L;
 	
 	/**
-	 * @author greg (creation 2014-09-11)
+	 * @author ga (creation 2014-09-11)
 	 */
 	public static final class DOMBuilder implements Serializable {
 		

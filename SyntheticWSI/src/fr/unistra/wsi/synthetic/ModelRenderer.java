@@ -26,7 +26,7 @@ import net.sourceforge.aprog.tools.TaskManager;
 import net.sourceforge.aprog.tools.Tools;
 
 /**
- * @author greg (creation 2014-09-16)
+ * @author ga (creation 2014-09-16)
  */
 public final class ModelRenderer implements Serializable {
 	

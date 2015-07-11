@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 
 /**
- * @author greg (creation 2014-09-05)
+ * @author ga (creation 2014-09-05)
  */
 public final class VirtualCanvasComponent extends JComponent {
 	

@@ -39,7 +39,7 @@ import net.sourceforge.aprog.tools.TicToc;
 import net.sourceforge.aprog.tools.Tools;
 
 /**
- * @author greg (creation 2014-09-12)
+ * @author ga (creation 2014-09-12)
  */
 public final class AdjacentObjectsRenderer implements RegionRenderer {
 	
@@ -321,7 +321,7 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-12)
+	 * @author ga (creation 2014-09-12)
 	 */
 	public static final class TextureObject implements Serializable {
 		
@@ -357,7 +357,7 @@ public final class AdjacentObjectsRenderer implements RegionRenderer {
 	}
 	
 	/**
-	 * @author greg (creation 2014-09-16)
+	 * @author ga (creation 2014-09-16)
 	 */
 	public static final class TextureUnit implements Serializable {
 		
