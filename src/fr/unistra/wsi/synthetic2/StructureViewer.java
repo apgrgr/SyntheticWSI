@@ -52,11 +52,7 @@ public final class StructureViewer {
 			final float duct0Diameter = editor.point(base[0]).distance(editor.point(base[1]));
 			final float duct1Diameter = duct0Diameter * 0.5F;
 			
-			editor.addSegmentIfAbsent(base[0], base[1]).setConstraint("duct" + d0 + "Diameter=" + duct0Diameter);
-			
-			final int[] duct0End = addGirder(base[0], base[1], duct0Direction, editor);
-			
-			editor.segment(duct0End[0], duct0End[1]).setConstraint("duct" + d0 + "Diameter");
+			final int[] duct0End = addGirder(base[0], base[1], duct0Direction, "duct" + d0, "" + duct0Diameter, editor);
 			
 			addBranch(editor, d0, d1, duct0End, duct1Direction, duct0Diameter, duct1Diameter);
 			
@@ -64,15 +60,13 @@ public final class StructureViewer {
 		});
 	}
 
-	public static void addBranch(final JointsEditorPanel editor, final int d0, final int d1, final int[] duct0End,
+	public static final int[] addBranch(final JointsEditorPanel editor, final int d0, final int d1, final int[] duct0End,
 			final Vector3f duct1Direction, final float duct0Diameter, final float duct1Diameter) {
 		final int[] duct1Start = addUJoint(duct0End[0], duct0End[1], duct1Direction, editor);
 		
 		setupUJointConstraints(editor, d0, d1, duct0Diameter, duct0End, duct1Start, duct1Diameter, (float) (Math.PI / 2.0));
 		
-		final int[] duct1End = addGirder(duct1Start[0], duct1Start[1], duct1Direction, editor);
-		
-		editor.segment(duct1End[0], duct1End[1]).setConstraint("duct" + d1 + "Diameter");
+		return addGirder(duct1Start[0], duct1Start[1], duct1Direction, "duct" + d1, "" + duct1Diameter, editor);
 	}
 	
 	public static final void setupUJointConstraints(final JointsEditorPanel editor, final int d0, final int d1,
@@ -102,7 +96,8 @@ public final class StructureViewer {
 		editor.segment(duct1Start[0], duct0End[1]).setConstraint("duct" + d0 + "Duct" + d1 + "TorsionComplement");
 	}
 	
-	public static final int[] addGirder(final int id1, final int id2, final Vector3f direction, final JointsEditorPanel editor) {
+	public static final int[] addGirder(final int id1, final int id2, final Vector3f direction,
+			final String objectName, final String baseConstraint, final JointsEditorPanel editor) {
 		final Point3f start1 = editor.point(id1);
 		final Point3f start2 = editor.point(id2);
 		final Point3f end1 = new Point3f(start1);
@@ -112,16 +107,18 @@ public final class StructureViewer {
 		end2.add(direction);
 		
 		final int[] result = new int[2];
-		final float baseLength = start1.distance(start2);
 		final float length = direction.length();
-		final float diagonal = (float) sqrt(square(length) + square(baseLength));
+		final String b2 = join("", "(", baseConstraint, ")*(", baseConstraint, ")");
+		final String l2 = join("", length, "*", length);
+		final String diagonal = join("", "Math.sqrt(", b2, "+", l2, ")");
 		
 		result[0] = editor.addJoint(end1);
 		result[1] = editor.addJoint(end2);
 		
+		editor.addSegmentIfAbsent(id1, id2).setConstraint(objectName + "Diameter=" + baseConstraint);
 		editor.addSegmentIfAbsent(id1, result[0]).setConstraint("" + length);
 		editor.addSegmentIfAbsent(id2, result[1]).setConstraint("" + length);
-		editor.addSegmentIfAbsent(result[0], result[1]).setConstraint("" + baseLength);
+		editor.addSegmentIfAbsent(result[0], result[1]).setConstraint(objectName + "Diameter");
 		editor.addSegmentIfAbsent(id1, result[1]).setConstraint("" + diagonal);
 		editor.addSegmentIfAbsent(id2, result[0]).setConstraint("" + diagonal);
 		
