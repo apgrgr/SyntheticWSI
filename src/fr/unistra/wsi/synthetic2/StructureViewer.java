@@ -1,5 +1,6 @@
 package fr.unistra.wsi.synthetic2;
 
+import static java.lang.Math.cos;
 import static java.lang.Math.sqrt;
 import static javax.swing.SwingUtilities.invokeLater;
 import static joints2.JointsEditorPanel.middle;
@@ -15,7 +16,6 @@ import joints2.JointsEditorPanel;
 
 import multij.swing.ScriptingPanel;
 import multij.tools.IllegalInstantiationException;
-import multij.tools.Tools;
 
 /**
  * @author ga (creation 2015-09-01)
@@ -41,46 +41,65 @@ public final class StructureViewer {
 			final JointsEditorPanel editor = new JointsEditorPanel();
 			debugEditor[0] = editor;
 			
-			final int p1 = editor.addJoint(new Point3f(-1F, 0F, 0F));
-			final int p2 = editor.addJoint(new Point3f(1F, 0F, 0F));
-			final float duct0Diameter = editor.point(p1).distance(editor.point(p2));
+			final int[] base = new int[2];
+			base[0] = editor.addJoint(new Point3f(-1F, 0F, 0F));
+			base[1] = editor.addJoint(new Point3f(1F, 0F, 0F));
+			final Vector3f duct0Direction = new Vector3f(0F, 4F, 0F);
+			final Vector3f duct1Direction = new Vector3f(0F, 1F, 0F);
+			final int d0 = 0;
+			final int d1 = 1;
 			
-			editor.addSegmentIfAbsent(p1, p2).setConstraint("duct0Diameter=" + duct0Diameter);
-			
-			final int[] duct0End = addGirder(p1, p2, new Vector3f(0F, 4F, 0F), editor);
-			editor.segment(duct0End[0], duct0End[1]).setConstraint("duct0Diameter");
-			final int[] duct1Start = addUJoint(duct0End[0], duct0End[1], new Vector3f(0F, 1F, 0F), editor);
+			final float duct0Diameter = editor.point(base[0]).distance(editor.point(base[1]));
 			final float duct1Diameter = duct0Diameter * 0.5F;
 			
-			editor.segment(duct1Start[0], duct1Start[1]).setConstraint("duct1Diameter=" + duct1Diameter);
+			editor.addSegmentIfAbsent(base[0], base[1]).setConstraint("duct" + d0 + "Diameter=" + duct0Diameter);
 			
-			/*
-			 * duct0End[0] -> duct1Start[0] -> duct0End[1] -> duct1Start[1]
-			 */
-			final float duct0Duct1Torsion = (float) sqrt(square(duct0Diameter) + square(duct1Diameter)) / 2F;
+			final int[] duct0End = addGirder(base[0], base[1], duct0Direction, editor);
 			
-			debugPrint(editor.segment(duct0End[0], duct1Start[0]).setConstraint("duct0Duct1Torsion=" + duct0Duct1Torsion));
-			{
-				final String a = "(duct0Diameter/2)";
-				final String a2 = a + "*" + a;
-				final String b = "(duct1Diameter/2)";
-				final String b2 = b + "*" + b;
-				final String c = "duct0Duct1Torsion";
-				final String c2 = c + "*" + c;
-				final String gamma = join("", "Math.acos((", a2, "+", b2, "-", c2, ")/(", "2*", a, "*", b, "))");
-				
-				debugPrint(editor.segment(duct1Start[0], duct0End[1]).setConstraint("duct0Duct1TorsionComplement="
-				+ join("", "Math.sqrt(", a2, "+", b2, "-", "2*", a, "*", b, "*Math.cos(Math.PI-", gamma, "))")));
-			}
-			debugPrint(editor.segment(duct0End[1], duct1Start[1]).setConstraint("duct0Duct1Torsion"));
-			debugPrint(editor.segment(duct1Start[1], duct0End[0]).setConstraint("duct0Duct1TorsionComplement"));
+			editor.segment(duct0End[0], duct0End[1]).setConstraint("duct" + d0 + "Diameter");
 			
-			final int[] duct1End = addGirder(duct1Start[0], duct1Start[1], new Vector3f(0F, 4F, 0F), editor);
-			
-			editor.segment(duct1End[0], duct1End[1]).setConstraint("duct1Diameter");
+			addBranch(editor, d0, d1, duct0End, duct1Direction, duct0Diameter, duct1Diameter);
 			
 			show(editor, StructureViewer.class.getName(), false);
 		});
+	}
+
+	public static void addBranch(final JointsEditorPanel editor, final int d0, final int d1, final int[] duct0End,
+			final Vector3f duct1Direction, final float duct0Diameter, final float duct1Diameter) {
+		final int[] duct1Start = addUJoint(duct0End[0], duct0End[1], duct1Direction, editor);
+		
+		setupUJointConstraints(editor, d0, d1, duct0Diameter, duct0End, duct1Start, duct1Diameter, (float) (Math.PI / 2.0));
+		
+		final int[] duct1End = addGirder(duct1Start[0], duct1Start[1], duct1Direction, editor);
+		
+		editor.segment(duct1End[0], duct1End[1]).setConstraint("duct" + d1 + "Diameter");
+	}
+	
+	public static final void setupUJointConstraints(final JointsEditorPanel editor, final int d0, final int d1,
+			final float duct0Diameter, final int[] duct0End, final int[] duct1Start, final float duct1Diameter, final float torsion) {
+		editor.segment(duct1Start[0], duct1Start[1]).setConstraint("duct" + d1 + "Diameter=" + duct1Diameter);
+		
+		/*
+		 * duct0End[0] -> duct1Start[0] -> duct0End[1] -> duct1Start[1]
+		 */
+		
+		final float duct0Duct1Torsion = (float) sqrt(square(duct0Diameter) + square(duct1Diameter) - 2F * duct0Diameter * duct1Diameter * (float) cos(torsion)) / 2F;
+		
+		editor.segment(duct0End[0], duct1Start[0]).setConstraint("duct" + d0 + "Duct" + d1 + "Torsion=" + duct0Duct1Torsion);
+		{
+			final String a = "(duct" + d0 + "Diameter/2)";
+			final String a2 = a + "*" + a;
+			final String b = "(duct" + d1 + "Diameter/2)";
+			final String b2 = b + "*" + b;
+			final String c = "duct" + d0 + "Duct" + d1 + "Torsion";
+			final String c2 = c + "*" + c;
+			final String gamma = join("", "Math.acos((", a2, "+", b2, "-", c2, ")/(", "2*", a, "*", b, "))");
+			
+			editor.segment(duct1Start[1], duct0End[0]).setConstraint("duct" + d0 + "Duct" + d1 + "TorsionComplement="
+					+ join("", "Math.sqrt(", a2, "+", b2, "-", "2*", a, "*", b, "*Math.cos(Math.PI-", gamma, "))"));
+		}
+		editor.segment(duct0End[1], duct1Start[1]).setConstraint("duct" + d0 + "Duct" + d1 + "Torsion");
+		editor.segment(duct1Start[0], duct0End[1]).setConstraint("duct" + d0 + "Duct" + d1 + "TorsionComplement");
 	}
 	
 	public static final int[] addGirder(final int id1, final int id2, final Vector3f direction, final JointsEditorPanel editor) {
