@@ -1,5 +1,6 @@
 package fr.unistra.wsi.synthetic2;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sqrt;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -9,11 +10,15 @@ import static multij.swing.SwingTools.useSystemLookAndFeel;
 import static multij.tools.MathTools.square;
 import static multij.tools.Tools.*;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 import joints2.JointsEditorPanel;
-
 import multij.swing.ScriptingPanel;
 import multij.tools.IllegalInstantiationException;
 
@@ -45,28 +50,65 @@ public final class StructureViewer {
 			base[0] = editor.addJoint(new Point3f(-1F, 0F, 0F));
 			base[1] = editor.addJoint(new Point3f(1F, 0F, 0F));
 			final Vector3f duct0Direction = new Vector3f(0F, 4F, 0F);
-			final Vector3f duct1Direction = new Vector3f(0F, 1F, 0F);
+			final Vector3f[] duct1Directions = { new Vector3f(-2F, 2F, 0F), new Vector3f(2F, 2F, 0F) };
+			final int duct1Count = duct1Directions.length;
 			final int d0 = 0;
 			final int d1 = 1;
+			final int d2 = 2;
 			
 			final float duct0Diameter = editor.point(base[0]).distance(editor.point(base[1]));
-			final float duct1Diameter = duct0Diameter * 0.5F;
+			final float duct1Diameter = duct0Diameter * 0.8F;
+			final float duct2Diameter = duct1Diameter * 0.8F;
 			
 			final int[] duct0End = addGirder(base[0], base[1], duct0Direction, "duct" + d0, "" + duct0Diameter, editor);
+			final int[][] duct1Ends = addBranches(editor, duct0End, d0, duct0Diameter, d1, duct1Diameter, duct1Directions);
 			
-			addBranch(editor, d0, d1, duct0End, duct1Direction, duct0Diameter, duct1Diameter);
+			for (int i = 0; i < duct1Count; ++i) {
+				final Vector3f[] duct2Directions = Arrays.stream(duct1Directions).map(v -> rotated(v, new AxisAngle4f(0F, 1F, 0F, (float) (PI / 2.0)))).toArray(Vector3f[]::new);
+				addBranches(editor, duct1Ends[i], d1, duct1Diameter, d2, duct2Diameter, duct2Directions);
+			}
 			
 			show(editor, StructureViewer.class.getName(), false);
 		});
 	}
-
-	public static final int[] addBranch(final JointsEditorPanel editor, final int d0, final int d1, final int[] duct0End,
-			final Vector3f duct1Direction, final float duct0Diameter, final float duct1Diameter) {
+	
+	public static final Vector3f rotated(final Vector3f v, final AxisAngle4f axisAngle) {
+		final Vector3f result = new Vector3f();
+		final Matrix4f transform = new Matrix4f();
+		
+		transform.set(axisAngle);
+		transform.transform(v, result);
+		
+		return result;
+	}
+	
+	public static final int[] addBranch(final JointsEditorPanel editor, final int[] duct0End, final int d0, final float duct0Diameter, final int d1,
+			final float duct1Diameter, final Vector3f duct1Direction) {
 		final int[] duct1Start = addUJoint(duct0End[0], duct0End[1], duct1Direction, editor);
 		
 		setupUJointConstraints(editor, d0, d1, duct0Diameter, duct0End, duct1Start, duct1Diameter, (float) (Math.PI / 2.0));
 		
 		return addGirder(duct1Start[0], duct1Start[1], duct1Direction, "duct" + d1, "" + duct1Diameter, editor);
+	}
+	
+	public static final int[][] addBranches(final JointsEditorPanel editor, final int[] duct0End, final int d0, final float duct0Diameter,
+			final int d1, final float newDuctsDiameter, final Vector3f... newDuctDirections) {
+		final Vector3f jointDirection = new Vector3f();
+		
+		Arrays.stream(newDuctDirections).forEach(jointDirection::add);
+		
+		final int[] duct1Start = addUJoint(duct0End[0], duct0End[1], jointDirection, editor);
+		
+		setupUJointConstraints(editor, d0, d1, duct0Diameter, duct0End, duct1Start, newDuctsDiameter, (float) (Math.PI / 2.0));
+		
+		final int n = newDuctDirections.length;
+		final int[][] result = new int[n][];
+		
+		for (int i = 0; i < n; ++i) {
+			result[i] = addGirder(duct1Start[0], duct1Start[1], newDuctDirections[i], "duct" + d1, "" + newDuctsDiameter, editor);
+		}
+		
+		return result;
 	}
 	
 	public static final void setupUJointConstraints(final JointsEditorPanel editor, final int d0, final int d1,
