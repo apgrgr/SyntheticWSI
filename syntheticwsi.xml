@@ -12,8 +12,7 @@
             <fileset file="README.txt"/>
             <fileset dir="src"/>
             <fileset dir="bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/aprog.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/jgencode.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/multij-1.8.201506041044.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/bioformats_package.jar"/>
             <fileset dir="lib" excludes="*.jar"/>
         </jar>
